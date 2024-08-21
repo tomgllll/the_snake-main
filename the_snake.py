@@ -61,11 +61,11 @@ class GameObject:
 class Apple(GameObject):
     """Класс, описывающий яблоко и действия с ним."""
 
-    def __init__(self):
+    def __init__(self, position=None, body_color=APPLE_COLOR):
         """Инициализация яблока в случайной позиции."""
-        super().__init__(position=self.randomize_position(),
-                         body_color=APPLE_COLOR
-                         )
+        if position is None:
+            position = self.randomize_position()
+        super().__init__(position=position, body_color=body_color)
 
     def randomize_position(self):
         """Установка случайной позиции для яблока."""
@@ -83,10 +83,9 @@ class Apple(GameObject):
 class Snake(GameObject):
     """Класс, описывающий змейку и её поведение."""
 
-    def __init__(self):
+    def __init__(self, position=CENTER_POSITION, body_color=SNAKE_COLOR):
         """Инициализация змейки."""
-        super().__init__(position=CENTER_POSITION,
-                         body_color=SNAKE_COLOR)
+        super().__init__(position=position, body_color=body_color)
         self.length = 1
         self.positions = [self.position]
         self.direction = RIGHT
