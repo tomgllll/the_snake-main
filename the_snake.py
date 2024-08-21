@@ -55,23 +55,28 @@ class GameObject:
 
     def draw(self):
         """Абстрактный метод отрисовки объекта."""
-        raise NotImplementedError("Метод draw() должен быть реализован в дочернем классе.")
+        raise NotImplementedError("Метод draw() реализован в дочернем классе.")
 
 
 class Apple(GameObject):
     """Класс, описывающий яблоко и действия с ним."""
 
-    def __init__(self, position=None, body_color=APPLE_COLOR):
-        """Инициализация яблока в случайной позиции."""
+    def __init__(self, position=None, 
+                 body_color=APPLE_COLOR, occupied_positions=None):
+        """Инициализация яблока в случайной позиции"""
+        if occupied_positions is None:
+            occupied_positions = []
         if position is None:
-            position = self.randomize_position()
+            position = self.randomize_position(occupied_positions)
         super().__init__(position=position, body_color=body_color)
 
-    def randomize_position(self):
-        """Установка случайной позиции для яблока."""
-        return (randint(0, GRID_WIDTH - 1) * GRID_SIZE,
-                randint(0, GRID_HEIGHT - 1) * GRID_SIZE
-                )
+    def randomize_position(self, occupied_positions):
+        """Установка случайной позиции для яблока, избегая занятых ячеек."""
+        while True:
+            position = (randint(0, GRID_WIDTH - 1) * GRID_SIZE,
+                        randint(0, GRID_HEIGHT - 1) * GRID_SIZE)
+            if position not in occupied_positions:
+                return position
 
     def draw(self):
         """Отрисовка яблока на экране."""
@@ -107,7 +112,7 @@ class Snake(GameObject):
         self.positions.insert(0, new_head)
 
         # Если длина змейки больше, чем должна быть, удаляем последний элемент
-        if len(self.positions) > self.length + 1:
+        if len(self.positions) > self.length:
             self.last = self.positions.pop()
         else:
             self.last = None
@@ -162,7 +167,7 @@ def main():
     """Основной цикл игры"""
     pg.init()
     snake = Snake()
-    apple = Apple()
+    apple = Apple(occupied_positions=snake.positions)
 
     while True:
         clock.tick(SPEED)
@@ -172,7 +177,7 @@ def main():
 
         if snake.get_head_position() == apple.position:
             snake.length += 1
-            apple.position = apple.randomize_position()
+            apple.position = apple.randomize_position(snake.positions)
 
         if snake.get_head_position() in snake.positions[1:]:
             snake.reset()
