@@ -55,7 +55,7 @@ class GameObject:
 
     def draw(self):
         """Абстрактный метод отрисовки объекта."""
-        raise NotImplementedError("Метод draw() в дочернем классе.")
+        raise NotImplementedError("Метод draw() реализован в дочернем классе.")
 
 
 class Apple(GameObject):
@@ -63,7 +63,7 @@ class Apple(GameObject):
 
     def __init__(self, position=None, body_color=APPLE_COLOR, 
                  occupied_positions=None):
-        """Инициализация яблока в случайной позиции"""
+        """Инициализация яблока в случайной позиции учитывая занятые позиции"""
         if occupied_positions is None:
             occupied_positions = []
         if position is None:
@@ -96,7 +96,7 @@ class Snake(GameObject):
     def reset(self):
         """Сброс состояния змейки к начальному."""
         self.length = 1
-        self.positions = [self.position] 
+        self.positions = [self.position]
         self.direction = choice([UP, DOWN, LEFT, RIGHT])
         self.next_direction = None
         self.last = None
@@ -110,9 +110,11 @@ class Snake(GameObject):
     def move(self):
         """Движение змейки."""
         current_head = self.get_head_position()
+        head_x, head_y = current_head  # Распаковка позиции головы
+
         x, y = self.direction
-        new_head = (((current_head[0] + (x * GRID_SIZE)) % SCREEN_WIDTH),
-                    ((current_head[1] + (y * GRID_SIZE)) % SCREEN_HEIGHT))
+        new_head = (((head_x + (x * GRID_SIZE)) % SCREEN_WIDTH),
+                    ((head_y + (y * GRID_SIZE)) % SCREEN_HEIGHT))
         self.positions.insert(0, new_head)
 
         # Если длина змейки больше, чем должна быть, удаляем последний элемент
@@ -176,7 +178,7 @@ def main():
             snake.length += 1
             apple.position = apple.randomize_position(snake.positions)
 
-        elif snake.get_head_position() in snake.positions[1:]:
+        if snake.get_head_position() in snake.positions[1:]:
             snake.reset()
 
         screen.fill(BOARD_BACKGROUND_COLOR)
