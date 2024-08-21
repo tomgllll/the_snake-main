@@ -53,9 +53,14 @@ class GameObject:
         self.position = position
         self.body_color = body_color
 
-    def draw(self):
-        """Абстрактный метод отрисовки объекта."""
-        raise NotImplementedError("Метод draw() реализован в дочернем классе.")
+    def draw_rect(self, position, color=None):
+        """Отрисовка одной ячейки на экране."""
+        if color is None:
+            color = self.body_color
+        rect = pg.Rect(position, (GRID_SIZE, GRID_SIZE))
+        pg.draw.rect(screen, color, rect)
+        if color != BOARD_BACKGROUND_COLOR:
+            pg.draw.rect(screen, BORDER_COLOR, rect, 1)
 
 
 class Apple(GameObject):
@@ -63,7 +68,9 @@ class Apple(GameObject):
 
     def __init__(self, position=None, body_color=APPLE_COLOR, 
                  occupied_positions=None):
-        """Инициализация яблока в случайной позиции учитывая занятые позиции"""
+        """Инициализация яблока в случайной позиции, 
+        учитывая занятые позиции.
+        """
         if occupied_positions is None:
             occupied_positions = []
         if position is None:
@@ -80,9 +87,7 @@ class Apple(GameObject):
 
     def draw(self):
         """Отрисовка яблока на экране."""
-        rect = pg.Rect(self.position, (GRID_SIZE, GRID_SIZE))
-        pg.draw.rect(screen, self.body_color, rect)
-        pg.draw.rect(screen, BORDER_COLOR, rect, 1)
+        self.draw_rect(self.position)
 
 
 class Snake(GameObject):
@@ -96,7 +101,7 @@ class Snake(GameObject):
     def reset(self):
         """Сброс состояния змейки к начальному."""
         self.length = 1
-        self.positions = [self.position]
+        self.positions = [self.position]  
         self.direction = choice([UP, DOWN, LEFT, RIGHT])
         self.next_direction = None
         self.last = None
@@ -125,20 +130,16 @@ class Snake(GameObject):
 
     def draw(self):
         """Отрисовка змейки на экране."""
+        # Отрисовка всех сегментов тела змейки
         for position in self.positions[:-1]:
-            rect = pg.Rect(position, (GRID_SIZE, GRID_SIZE))
-            pg.draw.rect(screen, self.body_color, rect)
-            pg.draw.rect(screen, BORDER_COLOR, rect, 1)
+            self.draw_rect(position)
 
         # Отрисовка головы змейки
-        head_rect = pg.Rect(self.positions[0], (GRID_SIZE, GRID_SIZE))
-        pg.draw.rect(screen, self.body_color, head_rect)
-        pg.draw.rect(screen, BORDER_COLOR, head_rect, 1)
+        self.draw_rect(self.positions[0])
 
         # Затирание последнего сегмента
         if self.last:
-            last_rect = pg.Rect(self.last, (GRID_SIZE, GRID_SIZE))
-            pg.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)
+            self.draw_rect(self.last, color=BOARD_BACKGROUND_COLOR)
 
     def get_head_position(self):
         """Возвращает позицию головы змейки."""
@@ -178,7 +179,7 @@ def main():
             snake.length += 1
             apple.position = apple.randomize_position(snake.positions)
 
-        if snake.get_head_position() in snake.positions[1:]:
+        elif snake.get_head_position() in snake.positions[1:]:
             snake.reset()
 
         screen.fill(BOARD_BACKGROUND_COLOR)
