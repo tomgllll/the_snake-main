@@ -8,6 +8,9 @@ GRID_SIZE = 20
 GRID_WIDTH = SCREEN_WIDTH // GRID_SIZE
 GRID_HEIGHT = SCREEN_HEIGHT // GRID_SIZE
 
+# Новая константа для центра экрана:
+CENTER_POSITION = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+
 # Направления движения:
 UP = (0, -1)
 DOWN = (0, 1)
@@ -43,7 +46,7 @@ class GameObject:
     """Базовый класс, от которого наследуются другие игровые объекты."""
 
     def __init__(self,
-                 position=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2),
+                 position=CENTER_POSITION,
                  body_color=None
                  ):
         """Инициализация базовых атрибутов объекта."""
@@ -52,7 +55,7 @@ class GameObject:
 
     def draw(self):
         """Абстрактный метод отрисовки объекта."""
-        pass
+        raise NotImplementedError("Метод draw() должен быть реализован в дочернем классе.")
 
 
 class Apple(GameObject):
@@ -82,7 +85,7 @@ class Snake(GameObject):
 
     def __init__(self):
         """Инициализация змейки."""
-        super().__init__(position=((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2)),
+        super().__init__(position=CENTER_POSITION,
                          body_color=SNAKE_COLOR)
         self.length = 1
         self.positions = [self.position]
