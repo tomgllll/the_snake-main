@@ -39,10 +39,11 @@ pygame.display.set_caption('Змейка')
 clock = pygame.time.Clock()
 
 
-# Тут опишите все классы игры.
 class GameObject:
-    def __init__(self, 
-                 position=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2), 
+    """Базовый класс, от которого наследуются другие игровые объекты."""
+
+    def __init__(self,
+                 position=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2),
                  body_color=None
                  ):
         """Инициализация базовых атрибутов объекта."""
@@ -55,15 +56,17 @@ class GameObject:
 
 
 class Apple(GameObject):
+    """Класс, описывающий яблоко и действия с ним."""
+
     def __init__(self):
         """Инициализация яблока в случайной позиции."""
-        super().__init__(position=self.randomize_position(), 
+        super().__init__(position=self.randomize_position(),
                          body_color=APPLE_COLOR
                          )
 
     def randomize_position(self):
         """Установка случайной позиции для яблока."""
-        return (randint(0, GRID_WIDTH - 1) * GRID_SIZE, 
+        return (randint(0, GRID_WIDTH - 1) * GRID_SIZE,
                 randint(0, GRID_HEIGHT - 1) * GRID_SIZE
                 )
 
@@ -75,6 +78,8 @@ class Apple(GameObject):
 
 
 class Snake(GameObject):
+    """Класс, описывающий змейку и её поведение."""
+
     def __init__(self):
         """Инициализация змейки."""
         super().__init__(
@@ -154,9 +159,8 @@ def handle_keys(snake):
 
 
 def main():
-    # Инициализация PyGame:
+    """Основной цикл игры"""
     pygame.init()
-    # Тут нужно создать экземпляры классов.
     snake = Snake()
     apple = Apple()
 
