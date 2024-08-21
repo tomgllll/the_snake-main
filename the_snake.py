@@ -55,14 +55,14 @@ class GameObject:
 
     def draw(self):
         """Абстрактный метод отрисовки объекта."""
-        raise NotImplementedError("Метод draw() реализован в дочернем классе.")
+        raise NotImplementedError("Метод draw() в дочернем классе.")
 
 
 class Apple(GameObject):
     """Класс, описывающий яблоко и действия с ним."""
 
-    def __init__(self, position=None, 
-                 body_color=APPLE_COLOR, occupied_positions=None):
+    def __init__(self, position=None, body_color=APPLE_COLOR, 
+                 occupied_positions=None):
         """Инициализация яблока в случайной позиции"""
         if occupied_positions is None:
             occupied_positions = []
@@ -91,9 +91,13 @@ class Snake(GameObject):
     def __init__(self, position=CENTER_POSITION, body_color=SNAKE_COLOR):
         """Инициализация змейки."""
         super().__init__(position=position, body_color=body_color)
+        self.reset()
+
+    def reset(self):
+        """Сброс состояния змейки к начальному."""
         self.length = 1
-        self.positions = [self.position]
-        self.direction = RIGHT
+        self.positions = [self.position] 
+        self.direction = choice([UP, DOWN, LEFT, RIGHT])
         self.next_direction = None
         self.last = None
 
@@ -137,13 +141,6 @@ class Snake(GameObject):
     def get_head_position(self):
         """Возвращает позицию головы змейки."""
         return self.positions[0]
-
-    def reset(self):
-        """Сброс состояния змейки к начальному."""
-        self.length = 1
-        self.positions = [self.position]
-        self.direction = choice([UP, DOWN, LEFT, RIGHT])
-        self.last = None
 
 
 def handle_keys(snake):
